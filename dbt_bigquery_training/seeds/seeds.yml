@@ -11,4 +11,12 @@ seeds:
       - name: order_id
       - name: payment_method
       - name: amount
-
+  - name: raw_employees
+    description: Jaffleshop employees
+    columns:
+      - name: employee_id
+        tests:
+          - unique
+          - not_null
+      - name: email
+      - name: customer_id
