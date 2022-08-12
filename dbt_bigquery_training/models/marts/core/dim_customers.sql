@@ -12,8 +12,10 @@ with
             customer_id,
             min(order_date) as first_order_date,
             max(order_date) as most_recent_order_date,
-            count(order_id) as number_of_orders
-        from orders
+            count(orders.order_id) as number_of_orders,
+            sum(amount) as lifetime_value
+        from orders 
+        left join {{ ref('fct_orders') }} using (customer_id)
         group by customer_id
     ),
 
@@ -24,6 +26,7 @@ with
             customers.last_name,
             customer_orders.first_order_date,
             customer_orders.most_recent_order_date,
+            customer_orders.lifetime_value,
             coalesce(customer_orders.number_of_orders, 0) as number_of_orders
 
         from customers

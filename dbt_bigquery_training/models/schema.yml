@@ -20,6 +20,10 @@ models:
         tests:
           - unique
           - not_null
+      - name: first_name
+        description: Customer first name
+      - name: last_name
+        description: Customer last name
 
   - name: stg_orders
     description: This model cleans up order data
@@ -29,7 +33,47 @@ models:
         tests:
           - unique
           - not_null
+      - name: customer_id
+        description: Foreign key to sgt_customers.customer_id
+        tests:
+          - relationships:
+              to: ref('stg_customers')
+              field: customer_id
       - name: status
+        description: "{{ doc('order_status') }}"
         tests:
           - accepted_values:
-              values: ['placed', 'shipped', 'completed', 'return_pending', 'returned']
+              values:
+                - completed
+                - shipped
+                - returned
+                - return_pending
+                - placed
+
+  - name: stg_payments
+    description: List of payments for each customer and the ammount
+    columns:
+      - name: payment_id
+        description: Primary key for each payment record
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        description: to which order does it reffer it is a one payment to many orders relation
+        tests:
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+      - name: payment_method
+        description: "{{ doc('payment_methods') }}"
+        tests:
+          - accepted_values:
+              values:
+                - coupon
+                - gift_card
+                - credit_card
+                - bank_transfer
+      - name: amount
+        description: Paid ammount for the orders
+        tests:
+          - not_null
