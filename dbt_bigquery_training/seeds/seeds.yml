@@ -1,0 +1,22 @@
+version: 2
+
+seeds:
+  - name: raw_payments
+    description: Raw list of payments cause it was not available from BigQuery
+    columns:
+      - name: id
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+      - name: payment_method
+      - name: amount
+  - name: raw_employees
+    description: Jaffleshop employees
+    columns:
+      - name: employee_id
+        tests:
+          - unique
+          - not_null
+      - name: email
+      - name: customer_id
