@@ -8,7 +8,7 @@ select
     total_lifetime_value,
     round(amount/100.0,2) as order_value_dollars,
     orders.status as order_status,
-    payments.status as payment_status
+    'success' as payment_status
 from {{ source('jaffle_shop', 'orders') }}
 
 join (
@@ -46,21 +46,19 @@ join (
       select 
         first_name || ' ' || last_name as name, 
         * 
-      from {{ source('jaffle_shop', 'orders') }}
+      from {{ source('jaffle_shop', 'customers') }}
     ) b
     on a.user_id = b.id
 
-    left outer join raw.stripe.payment c
-    on a.id = c.orderid
+    left outer join {{ ref('payments') }} c
+    on a.id = c.order_id
 
-    where a.status NOT IN ('pending') and c.status != 'fail'
+    where a.status NOT IN ('pending')
 
     group by b.id, b.name, b.last_name, b.first_name
 
 ) customer_order_history
 on orders.user_id = customer_order_history.customer_id
 
-left outer join raw.stripe.payment payments
-on orders.id = payments.orderid
-
-where payments.status != 'fail'
+left outer join {{ ref('payments') }} payments
+on orders.id = payments.order_id
