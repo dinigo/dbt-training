@@ -17,3 +17,13 @@ sources:
             test:
               - unique
               - not_null
+
+  - name: analytics
+    description: Information comming form analytics in the web site.
+    database: bigquery-public-data
+    schema: ga4_obfuscated_sample_ecommerce
+    tables:
+      - name: events
+        identifier: events_20210101
+        description: Continuous analytics stream comming from Google Analytics
+        loaded_at_field: event_timestamp
