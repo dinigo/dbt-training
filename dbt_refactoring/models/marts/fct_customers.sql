@@ -3,7 +3,7 @@ with
 customers as (
   select * from {{ ref('stg_customers') }}
 ),
-order_values as (
+orders as (
   select * from {{ ref('int_orders') }}
 ),
 
@@ -29,7 +29,6 @@ customer_order_history as (
 
     from orders
     join customers using(customer_id)
-    left outer join payments using(order_id)
     group by customers.customer_id, customers.full_name, customers.surname, customers.givenname
 ),
 
@@ -45,7 +44,6 @@ final as (
       order_count,
       total_lifetime_value,
       orders.payment_status,
-      payment_status
   from orders
 
   join customers
